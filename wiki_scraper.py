@@ -3,11 +3,13 @@ from bs4 import BeautifulSoup
 import re
 from collections import Counter
 
-import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-nltk.download('punkt')
+
+#import nltk
+#nltk.download('stopwords')
+#nltk.download('punkt')
 
 class WikiScraper:
     word_count = None
@@ -60,9 +62,7 @@ class WikiScraper:
 
 if __name__ == "__main__":
     url = "https://en.wikipedia.org/wiki/Web_scraping"
-
     scraper = WikiScraper(url)
-
     words = scraper.get_words_with_count_in_class(url, "mw-body-content")
 
     if words:

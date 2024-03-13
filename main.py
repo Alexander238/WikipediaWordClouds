@@ -14,8 +14,14 @@ if __name__ == "__main__":
 
     identifiers, values = split_dictionary(words)
 
-    W_Bubble = WordBubbles(identifiers, values)
+    # Get the unique word count
+    unique_word_sum = scraper.get_unique_word_count()
+
+    W_Bubble = WordBubbles(identifiers, values, unique_word_sum)
+    W_Bubble.set_limit(100)
+    W_Bubble.set_bubbles_with_labels(30)
+
     fig, ax = plt.subplots()
-    W_Bubble.plot(ax, "")
+    W_Bubble.plot(ax)
 
     plt.show()
