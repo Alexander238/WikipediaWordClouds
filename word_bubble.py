@@ -1,14 +1,10 @@
 import matplotlib.pyplot as plt
-from matplotlib import pyplot as patches
-import mplcursors
-import numpy as np
-import random
+#import mplcursors
 import math
 
 browser_market_share = {
-    'browsers': ['firefox', 'chrome', 'safari', 'edge', 'ie', 'opera'],
-    'market_share': [8.61, 15.55, 8.36, 4.12, 2.76, 2.43, 3, 4, 5, 6, 8, 8, 8, 9, 10, 11, 12],
-    'color': ['#5A69AF', '#579E65', '#F9C784', '#FC944A', '#F24C00', '#00B825']
+    'browsers': [chr(ord('A') + i) for i in range(26)],
+    'market_share': [i + 1 for i in range(26)],
 }
 
 class NoMorePlacesError(Exception):
@@ -17,11 +13,12 @@ class NoMorePlacesError(Exception):
 class WordBubbles:
     minSize = 0
     
-    def __init__(self, values):
+    def __init__(self, identifiers, values):
+        self.identifiers = identifiers
         self.prev_angle = 0
         self.center_bubble_index = 0
         self.values = values
-        self.values.sort(reverse=True)
+        #self.values.sort(reverse=True)
         self.bubbles_radius = [(self.values[i] + self.minSize) for i in range(len(self.values))]
         self.bubbles = []
         self.calculate_bubbles()
@@ -37,6 +34,8 @@ class WordBubbles:
                 continue
             else:
                 if self.place_bubble(radius=self.bubbles_radius[i]):
+                    # If center bubble is being changed, reset prev_angle
+                    self.prev_angle = 0
                     i += 1
                     continue
                 else:
@@ -44,7 +43,7 @@ class WordBubbles:
                     if (self.center_bubble_index > bubble_count):
                         raise NoMorePlacesError("No more places to place circles. This should not happen, contact developer immedietly.")
 
-    # looks a little more random when using prev angle.
+    # Looks a little more random when using prev angle.
     def place_bubble(self, radius):
         stepsize = 1
         if self.prev_angle >= 360-stepsize: self.prev_angle = 0
@@ -73,21 +72,21 @@ class WordBubbles:
                 return True
         return False
 
-    def plot(self, ax, labels, colors):
+    def plot(self, ax, colors):
         for i in range(len(self.bubbles)):
             circle = plt.Circle((self.bubbles[i][0], self.bubbles[i][1]), self.bubbles[i][2], color="#5A69AF")
             ax.add_patch(circle)
-            ax.text(*(self.bubbles[i][0], self.bubbles[i][1]), str(i), horizontalalignment='center', verticalalignment="center")
+            ax.text(*(self.bubbles[i][0], self.bubbles[i][1]), self.identifiers[i], horizontalalignment='center', verticalalignment="center")
+        ax.axis("off")
+        ax.relim()
+        ax.autoscale_view()
 
 if __name__ == "__main__": 
-    wb = WordBubbles(browser_market_share['market_share'])
+    wb = WordBubbles(browser_market_share['browsers'], browser_market_share['market_share'])
 
     fig, ax = plt.subplots()
 
-    wb.plot(ax, "", "")
-    ax.axis("off")
-    ax.relim()
-    ax.autoscale_view()
-    ax.set_title("Gute Titel")
+    wb.plot(ax, "")
+    #ax.set_title("Gute Titel")
 
     plt.show()
